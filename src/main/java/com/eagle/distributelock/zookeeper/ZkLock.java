@@ -168,6 +168,12 @@ public class ZkLock implements Lock,Watcher {
             client.delete(currentNode.zkPath(), 0);
         } catch (InterruptedException | KeeperException e) {
             throw new LockFailureException(e.getMessage());
+        } finally {
+            try {
+                client.close();
+            } catch (InterruptedException e) {
+                throw new LockFailureException(e.getMessage());
+            }
         }
     }
     
@@ -194,7 +200,7 @@ public class ZkLock implements Lock,Watcher {
         private String seriaNumber;
         
         public Competitor() {
-            this.name = System.nanoTime() + "";
+            this.name = "competitor" + System.nanoTime();
         }
         
         public Competitor(String info) {

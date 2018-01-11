@@ -15,7 +15,7 @@ public class LockTest {
             @Override
             public void run() {
                 ZkLock lock = new ZkLock("test",connection);
-                lock.lock(10);
+                lock.lock();
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -30,11 +30,7 @@ public class LockTest {
             t.start();
         }
         
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Thread.sleep(60000);
     }
     
 }
