@@ -9,31 +9,32 @@ public class LockTest {
     
     @Test
     public void test() throws InterruptedException {
+        final String connection = "127.0.0.1:2181";
+        
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                ZkLock lock = new ZkLock("test");
-                lock.lock();
-                System.out.println(Thread.currentThread().getName() + "获取到锁");
+                ZkLock lock = new ZkLock("test",connection);
+                lock.lock(10);
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 lock.unlock();
-                System.out.println(Thread.currentThread().getName() + "释放锁");
             }
         };
         
-        for(int i=0;i<3;i++) {
+        for(int i=1;i<11;i++) {
             Thread t = new Thread(r);
             t.start();
         }
         
         try {
-            Thread.sleep(6000);
+            Thread.sleep(60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+    
 }

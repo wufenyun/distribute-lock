@@ -13,5 +13,7 @@ public interface Lock {
     
     void lock();
     
+    void lock(long timeoutSeconds);
+    
     void unlock();
 }
