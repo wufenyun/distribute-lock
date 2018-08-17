@@ -31,7 +31,12 @@ import com.eagle.distributelock.LockFailureException;
 public class ZkLock implements Lock,Watcher {
     
     private final static Logger logger = LoggerFactory.getLogger(ZkLock.class);
-    
+    /**
+     * zookeeper session超时时间
+     */
+    private final static int sessionTimeout = 30000;
+    private final static String PREFIX = "/";
+
     private ZooKeeper client;
     /**
      * 当前节点
@@ -49,11 +54,7 @@ public class ZkLock implements Lock,Watcher {
      * 代表创建锁的根目录
      */
     private static String ROOT_LOCK;
-    /**
-     * zookeeper session超时时间
-     */
-    private final static int sessionTimeout = 30000;
-    private final static String PREFIX = "/";
+
     
     public ZkLock(String lockName,String connectionStr) {
         try {
@@ -189,7 +190,7 @@ public class ZkLock implements Lock,Watcher {
      * 锁竞争者的抽象
      */
     public static class Competitor implements Comparable<Competitor>{
-        
+
         /**
          * 标识竞争者的name
          */
@@ -198,28 +199,28 @@ public class ZkLock implements Lock,Watcher {
          * zk生成有序队列时自动添加的序号
          */
         private String seriaNumber;
-        
+
         public Competitor() {
             this.name = "competitor" + System.nanoTime();
         }
-        
+
         public Competitor(String info) {
             this.name = info.split("_")[0];
             this.seriaNumber = info.split("_")[1];
         }
-        
+
         public String getRelativePath() {
             return PREFIX + name;
         }
-        
+
         public String path() {
             return ROOT_LOCK + PREFIX + name + "_";
         }
-        
+
         public String zkPath() {
             return ROOT_LOCK + PREFIX + name + "_" + seriaNumber;
         }
-        
+
         @Override
         public String toString() {
             return name;
@@ -229,7 +230,7 @@ public class ZkLock implements Lock,Watcher {
         public int compareTo(Competitor o) {
             return seriaNumber.compareTo(o.seriaNumber);
         }
-        
+
         @Override
         public boolean equals(Object o) {
             if(o instanceof Competitor) {
@@ -238,12 +239,12 @@ public class ZkLock implements Lock,Watcher {
                 return false;
             }
         }
-        
+
         @Override
         public int hashCode() {
             return name.hashCode();
         }
-        
+
         public String getName() {
             return name;
         }
